@@ -1,11 +1,4 @@
-# ano - Noise / Avoid Words
-# These are stripped before topic extraction.
-# Format: one word or pattern per line. Lines starting with # are comments.
 
-# Common proper noun noise (specific names, model numbers, serial identifiers)
-# Add names, place-specific identifiers, or model codes here as you encounter them.
-
-# Generic stop words (already handled in sys.js but listed for reference)
 a
 an
 the
