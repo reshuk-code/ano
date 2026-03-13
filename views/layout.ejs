@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ano — <%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <a href="/" class="sidebar-logo-link">
+        <div class="logo-mark">a</div>
+        <span class="logo-text">ano</span>
+        <span class="logo-tag">feed engine</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/" class="nav-item <%= page === 'home' ? 'active' : '' %>">
+        <svg viewBox="0 0 16 16" fill="none">
+          <path d="M1 6.5L8 1l7 5.5V15H10v-4H6v4H1V6.5z" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        Overview
+      </a>
+
+      <% if (user) { %>
+      <a href="/dashboard" class="nav-item <%= page === 'dashboard' ? 'active' : '' %>">
+        <svg viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="6" height="6" rx="1.2" stroke-width="1.5"/>
+          <rect x="9" y="1" width="6" height="6" rx="1.2" stroke-width="1.5"/>
+          <rect x="1" y="9" width="6" height="6" rx="1.2" stroke-width="1.5"/>
+          <rect x="9" y="9" width="6" height="6" rx="1.2" stroke-width="1.5"/>
+        </svg>
+        Dashboard
+      </a>
+      <a href="/playground" class="nav-item <%= page === 'playground' ? 'active' : '' %>">
+        <svg viewBox="0 0 16 16" fill="none">
+          <polygon points="3,1 14,8 3,15" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        Playground
+      </a>
+      <% } %>
+
+      <a href="/docs" class="nav-item <%= page === 'docs' ? 'active' : '' %>">
+        <svg viewBox="0 0 16 16" fill="none">
+          <path d="M3 1h7l3 3v11H3V1z" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M10 1v3h3" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M5 7h6M5 10h6M5 13h3" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Docs
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <% if (user) { %>
+        <div class="sidebar-user">
+          <% if (user.photoURL) { %>
+            <img src="<%= user.photoURL %>" class="user-avatar" alt=""/>
+          <% } else { %>
+            <div class="user-avatar-placeholder"><%= (user.name || user.email || '?')[0].toUpperCase() %></div>
+          <% } %>
+          <div class="user-info">
+            <div class="user-name"><%= user.name || user.email %></div>
+            <a href="#" class="user-logout" onclick="logout()">Sign out</a>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="/login" class="btn btn-primary" style="width:100%;justify-content:center;font-size:12px;">Sign in / Sign up</a>
+      <% } %>
+      <div class="sidebar-version">v2.0.0 · <%= nodeEnv %></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-title"><%- topbarTitle || title %></div>
+      <div class="topbar-actions">
+        <a href="/health" target="_blank" class="health-pill" id="healthPill">
+          <span class="health-dot"></span> checking...
+        </a>
+        <% if (!user) { %>
+          <a href="/login" class="btn btn-primary" style="font-size:12px;padding:6px 14px;">Get started →</a>
+        <% } %>
+      </div>
+    </header>
+
+    <div class="content">
+      <%- body %>
+    </div>
+  </main>
+
+  <script src="/app.js"></script>
+  <% if (user) { %>
+  <!-- Firebase logout (only loaded when user is signed in) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    const fbApp = initializeApp(<%- JSON.stringify(firebaseConfig) %>);
+    const auth  = getAuth(fbApp);
+    window.logout = async () => {
+      await signOut(auth);
+      await fetch("/auth/logout", { method: "POST" });
+      window.location.href = "/";
+    };
+  </script>
+  <% } %>
+</body>
+</html>

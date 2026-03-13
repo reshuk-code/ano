@@ -1,0 +1,119 @@
+<!-- ── API KEYS PAGE ──────────────────────────────────────────── -->
+
+<div class="card mb-lg">
+  <div class="card-label">Issue a new key</div>
+  <form id="newKeyForm" class="inline-form mt-sm">
+    <input type="text"     name="tenantId"  placeholder="tenant-id  (e.g. acme-news)"        required />
+    <input type="text"     name="label"     placeholder="label  (e.g. Acme News Production)" required />
+    <select name="env">
+      <option value="live">live</option>
+      <option value="test">test</option>
+    </select>
+    <input type="password" name="masterKey" placeholder="master key" required />
+    <button type="submit" class="btn btn-primary">Issue key →</button>
+  </form>
+  <div id="newKeyResult" class="result-box hidden"></div>
+</div>
+
+<!-- Key result banner -->
+<div id="keyBanner" class="key-banner hidden">
+  <div class="key-banner-label">Your new API key — copy it now. This is the only time it will be shown.</div>
+  <div class="key-banner-row">
+    <code id="keyBannerValue" class="key-value"></code>
+    <button class="btn btn-ghost small" onclick="copyKey()">Copy</button>
+  </div>
+</div>
+
+<!-- Revoke section -->
+<div class="section-label mt-lg">Revoke a key</div>
+<div class="card">
+  <form id="revokeForm" class="inline-form">
+    <input type="text"     name="apiKey"    placeholder="ano_live_xxxx..."  required />
+    <input type="password" name="masterKey" placeholder="master key"        required />
+    <button type="submit" class="btn btn-danger">Revoke</button>
+  </form>
+  <div id="revokeResult" class="result-box hidden"></div>
+</div>
+
+<!-- Lookup keys for a tenant -->
+<div class="section-label mt-lg">Lookup keys by tenant</div>
+<div class="card">
+  <form id="lookupForm" class="inline-form">
+    <input type="text"     name="tenantId"  placeholder="tenant-id"  required />
+    <input type="password" name="masterKey" placeholder="master key" required />
+    <button type="submit" class="btn btn-ghost">Lookup →</button>
+  </form>
+  <div id="lookupResult" class="hidden mt-sm"></div>
+</div>
+
+<script>
+// Issue key
+document.getElementById('newKeyForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f   = e.target;
+  const res = await fetch('/admin/keys', {
+    method : 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-ano-master-key': f.masterKey.value },
+    body   : JSON.stringify({ tenantId: f.tenantId.value, label: f.label.value, env: f.env.value }),
+  });
+  const data = await res.json();
+  const banner = document.getElementById('keyBanner');
+  if (res.ok) {
+    document.getElementById('keyBannerValue').textContent = data.apiKey;
+    banner.classList.remove('hidden');
+    f.reset();
+  } else {
+    const box = document.getElementById('newKeyResult');
+    box.classList.remove('hidden'); box.classList.add('error');
+    box.textContent = data.error;
+  }
+});
+
+function copyKey() {
+  navigator.clipboard.writeText(document.getElementById('keyBannerValue').textContent);
+  document.querySelector('#keyBanner .btn').textContent = 'Copied!';
+  setTimeout(() => document.querySelector('#keyBanner .btn').textContent = 'Copy', 2000);
+}
+
+// Revoke
+document.getElementById('revokeForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f   = e.target;
+  const res = await fetch('/admin/keys', {
+    method : 'DELETE',
+    headers: { 'Content-Type': 'application/json', 'x-ano-master-key': f.masterKey.value },
+    body   : JSON.stringify({ apiKey: f.apiKey.value }),
+  });
+  const data = await res.json();
+  const box  = document.getElementById('revokeResult');
+  box.classList.remove('hidden', 'error');
+  if (res.ok) { box.textContent = '✓ Key revoked.'; }
+  else { box.classList.add('error'); box.textContent = data.error; }
+});
+
+// Lookup
+document.getElementById('lookupForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f   = e.target;
+  const res = await fetch('/admin/keys/' + f.tenantId.value, {
+    headers: { 'x-ano-master-key': f.masterKey.value },
+  });
+  const data = await res.json();
+  const out  = document.getElementById('lookupResult');
+  out.classList.remove('hidden');
+  if (res.ok && data.keys.length) {
+    out.innerHTML = data.keys.map(k => `
+      <div class="key-row">
+        <span class="key-label">${k.label}</span>
+        <span class="key-env env-${k.env}">${k.env}</span>
+        <span class="key-requests">${k.requestCount} req</span>
+        <span class="key-date">${new Date(k.createdAt).toLocaleDateString()}</span>
+      </div>
+    `).join('');
+  } else if (res.ok) {
+    out.innerHTML = '<p class="muted">No active keys for this tenant.</p>';
+  } else {
+    out.innerHTML = `<p class="error-text">${data.error}</p>`;
+  }
+});
+</script>

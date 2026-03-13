@@ -1,0 +1,147 @@
+<!-- ── LANDING PAGE ───────────────────────────────────────────── -->
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">Feed personalization · API-first · No ML required</div>
+  <h1 class="hero-headline">
+    Add a personalized<br/>
+    feed to your app<br/>
+    in <em>one afternoon</em>.
+  </h1>
+  <p class="hero-sub">
+    ano is a REST API that ranks your content by what each user actually cares about.
+    You send posts. We return them ranked. The feed gets smarter with every interaction.
+  </p>
+  <div class="hero-cta">
+    <% if (user) { %>
+      <a href="/dashboard" class="btn btn-primary">Go to Dashboard →</a>
+    <% } else { %>
+      <a href="/login" class="btn btn-primary">Get your API key — it's free</a>
+    <% } %>
+    <a href="/docs" class="btn btn-ghost">Read the docs →</a>
+  </div>
+  <div class="hero-social-proof">Used to power news feeds, content apps, and social platforms.</div>
+</section>
+
+<!-- The problem -->
+<section class="section">
+  <div class="section-label">The problem</div>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">✗</div>
+      <h3>Without ano</h3>
+      <ul>
+        <li>Every user sees the same feed</li>
+        <li>No signal from user behaviour</li>
+        <li>Building a ranking system takes months</li>
+        <li>Training ML models needs huge data</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">✓</div>
+      <h3>With ano</h3>
+      <ul>
+        <li>Every user gets posts ranked for them</li>
+        <li>Learns from likes, shares, skips</li>
+        <li>Integrate in a single afternoon</li>
+        <li>No model training — works on day one</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section">
+  <div class="section-label">How it works</div>
+  <div class="flow-grid">
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div class="flow-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h3>You send posts</h3>
+      <p>Pass any array of posts with title, body, and timestamp. ano extracts topic signals using NLP — no setup needed.</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <h3>ano profiles the user</h3>
+      <p>Each of your users gets a preference profile. It learns from explicit choices and implicit signals like shares and skips.</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>You get a ranked feed</h3>
+      <p>Posts come back sorted by relevance with a full score breakdown. Show users <em>why</em> they're seeing each post.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Code sample -->
+<section class="section">
+  <div class="section-label">What the integration looks like</div>
+  <div class="code-window">
+    <div class="code-topbar">
+      <span class="code-dot red"></span>
+      <span class="code-dot yellow"></span>
+      <span class="code-dot green"></span>
+      <span class="code-filename">your-backend.js</span>
+    </div>
+    <pre class="code-body"><span class="tok-comment">// Every time a user opens their feed:</span>
+<span class="tok-keyword">const</span> res = <span class="tok-keyword">await</span> fetch(<span class="tok-string">"https://your-ano-url/feed"</span>, {
+  method : <span class="tok-string">"POST"</span>,
+  headers: {
+    <span class="tok-string">"x-ano-api-key"</span> : <span class="tok-string">"ano_live_xxxx"</span>,   <span class="tok-comment">// your key from the dashboard</span>
+    <span class="tok-string">"x-ano-user-id"</span> : currentUser.id,        <span class="tok-comment">// your existing user ID</span>
+    <span class="tok-string">"Content-Type"</span>  : <span class="tok-string">"application/json"</span>,
+  },
+  body: JSON.stringify({ posts: allPosts }),  <span class="tok-comment">// your content, any format</span>
+});
+
+<span class="tok-keyword">const</span> { feed } = <span class="tok-keyword">await</span> res.json();
+<span class="tok-comment">// feed[0] is the most relevant post for this specific user ✓</span>
+<span class="tok-comment">// feed[0]._score.breakdown explains exactly why it ranked first</span></pre>
+  </div>
+</section>
+
+<!-- Topic taxonomy -->
+<section class="section">
+  <div class="section-label">Built-in topic intelligence</div>
+  <p class="section-desc">ano understands 12 content domains out of the box — no configuration, no training data required.</p>
+  <div class="topic-grid">
+    <% ['military','aviation','politics','economy','technology','health','sports','food','science','entertainment','crime','business'].forEach(t => { %>
+      <div class="topic-chip"><%= t %></div>
+    <% }) %>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stat-strip">
+  <div class="stat"><div class="stat-num">6</div><div class="stat-label">Engagement signals</div></div>
+  <div class="stat-divider"></div>
+  <div class="stat"><div class="stat-num">2×</div><div class="stat-label">Title weight vs body</div></div>
+  <div class="stat-divider"></div>
+  <div class="stat"><div class="stat-num">24h</div><div class="stat-label">Recency half-life</div></div>
+  <div class="stat-divider"></div>
+  <div class="stat"><div class="stat-num">0ms</div><div class="stat-label">Training time needed</div></div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <h2 class="cta-headline">Ready to build?</h2>
+  <p class="cta-sub">Get your API key in 30 seconds. Free to start.</p>
+  <div class="hero-cta">
+    <% if (user) { %>
+      <a href="/dashboard" class="btn btn-primary">Go to Dashboard →</a>
+    <% } else { %>
+      <a href="/login" class="btn btn-primary">Sign up free →</a>
+    <% } %>
+    <a href="/docs" class="btn btn-ghost">Read the docs</a>
+  </div>
+</section>

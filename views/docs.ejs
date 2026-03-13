@@ -1,0 +1,196 @@
+<!-- ── DOCS PAGE ──────────────────────────────────────────────── -->
+
+<div class="docs-layout">
+
+  <!-- Sidebar TOC -->
+  <nav class="docs-toc">
+    <div class="toc-label">On this page</div>
+    <a href="#overview" class="toc-link">Overview</a>
+    <a href="#auth" class="toc-link">Authentication</a>
+    <a href="#feed" class="toc-link">POST /feed</a>
+    <a href="#event" class="toc-link">POST /event</a>
+    <a href="#onboard" class="toc-link">POST /onboard</a>
+    <a href="#profile-get" class="toc-link">GET /profile</a>
+    <a href="#profile-post" class="toc-link">POST /profile</a>
+    <a href="#profile-delete" class="toc-link">DELETE /profile</a>
+    <a href="#topics" class="toc-link">Topics</a>
+    <a href="#events-ref" class="toc-link">Event weights</a>
+    <a href="#errors" class="toc-link">Errors</a>
+  </nav>
+
+  <!-- Doc content -->
+  <article class="docs-body">
+
+    <h1 id="overview">ano API Reference</h1>
+    <p class="lead">ano is a feed personalization engine. Send posts and a user ID — get back a ranked feed with full explainability. No ML setup, no training data.</p>
+
+    <!-- Auth -->
+    <h2 id="auth">Authentication</h2>
+    <p>Every request to a tenant route needs two headers:</p>
+    <div class="code-window">
+      <pre class="code-body">x-ano-api-key: ano_live_xxxxxxxxxxxxxxxx
+x-ano-user-id: &lt;your platform's user ID&gt;</pre>
+    </div>
+    <div class="param-table">
+      <div class="param-row header">
+        <span>Header</span><span>Value</span><span>Description</span>
+      </div>
+      <div class="param-row">
+        <span class="mono">x-ano-api-key</span>
+        <span class="mono">ano_live_xxxx</span>
+        <span>Your tenant API key. Get one from <a href="/keys">API Keys</a>.</span>
+      </div>
+      <div class="param-row">
+        <span class="mono">x-ano-user-id</span>
+        <span class="mono">user_abc123</span>
+        <span>The end user's ID in your system. Can be a Clerk UID, Firebase UID, or any stable unique string.</span>
+      </div>
+    </div>
+
+    <!-- POST /feed -->
+    <h2 id="feed">POST /feed</h2>
+    <p>The core endpoint. Call every time a user opens their feed. Returns your posts ranked by relevance to this specific user.</p>
+    <div class="endpoint-badge post">POST</div><code class="endpoint-path">/feed</code>
+
+    <h4>Request body</h4>
+    <div class="code-window">
+      <pre class="code-body">{
+  "posts": [
+    {
+      "id": "post_abc",
+      "title": "Army conducts anti-terror operation in border region",
+      "body": "Military forces launched a combat operation near the border...",
+      "timestamp": "2026-03-13T10:00:00Z",
+      "platform": "news"
+    }
+  ]
+}</pre>
+    </div>
+
+    <div class="param-table">
+      <div class="param-row header"><span>Field</span><span>Required</span><span>Description</span></div>
+      <div class="param-row"><span class="mono">id</span><span class="badge required">required</span><span>Your post ID</span></div>
+      <div class="param-row"><span class="mono">title</span><span class="badge required">required</span><span>Post headline — weighted 2× vs body in scoring</span></div>
+      <div class="param-row"><span class="mono">body</span><span class="badge optional">optional</span><span>Post body or description</span></div>
+      <div class="param-row"><span class="mono">timestamp</span><span class="badge optional">optional</span><span>ISO 8601. Used for recency boost (24h half-life)</span></div>
+      <div class="param-row"><span class="mono">platform</span><span class="badge optional">optional</span><span>Passed through unchanged in response</span></div>
+    </div>
+
+    <h4>Response</h4>
+    <div class="code-window">
+      <pre class="code-body">{
+  "tenantId": "acme-news",
+  "userId": "user_abc",
+  "count": 3,
+  "feed": [
+    {
+      "id": "post_abc",
+      "title": "Army conducts anti-terror operation...",
+      "_score": {
+        "final": 0.8583,
+        "raw": 0.9980,
+        "recencyBoost": 0.86,
+        "primaryTopic": "military",
+        "isBlocked": false,
+        "breakdown": [
+          { "topic": "military", "postWeight": 1.0, "userScore": 1.0, "contribution": 1.0 }
+        ]
+      }
+    }
+  ]
+}</pre>
+    </div>
+    <p class="hint">Use <code>_score.breakdown</code> to build a "why am I seeing this?" transparency feature for your users.</p>
+
+    <!-- POST /event -->
+    <h2 id="event">POST /event</h2>
+    <p>Record a user's engagement with a post. Call this from your frontend on every interaction. ano uses these signals to improve the user's feed over time.</p>
+    <div class="endpoint-badge post">POST</div><code class="endpoint-path">/event</code>
+
+    <div class="code-window">
+      <pre class="code-body">{
+  "eventType": "like",
+  "post": { "id": "post_abc", "title": "...", "body": "..." }
+}</pre>
+    </div>
+
+    <!-- POST /onboard -->
+    <h2 id="onboard">POST /profile/:userId/onboard</h2>
+    <p>Solves cold-start. Call once when a user signs up. Show them 5–8 topics to pick from — the feed is useful immediately.</p>
+    <div class="endpoint-badge post">POST</div><code class="endpoint-path">/profile/:userId/onboard</code>
+
+    <div class="code-window">
+      <pre class="code-body">{
+  "like":    ["aviation", "military", "technology"],
+  "dislike": ["food", "entertainment"]
+}</pre>
+    </div>
+
+    <!-- GET /profile -->
+    <h2 id="profile-get">GET /profile/:userId</h2>
+    <p>Fetch an end user's profile. Use to build a "your interests" settings page.</p>
+    <div class="endpoint-badge get">GET</div><code class="endpoint-path">/profile/:userId</code>
+
+    <!-- POST /profile -->
+    <h2 id="profile-post">POST /profile/:userId</h2>
+    <p>Update explicit topic preferences. Use when a user changes their interests in your settings UI.</p>
+    <div class="endpoint-badge post">POST</div><code class="endpoint-path">/profile/:userId</code>
+
+    <div class="code-window">
+      <pre class="code-body">{
+  "explicitTopics": {
+    "sports": true,
+    "food": false,
+    "politics": null
+  }
+}</pre>
+    </div>
+    <div class="param-table">
+      <div class="param-row header"><span>Value</span><span>Meaning</span></div>
+      <div class="param-row"><span class="mono">true</span><span>User explicitly wants this topic</span></div>
+      <div class="param-row"><span class="mono">false</span><span>Hard block — never show posts on this topic</span></div>
+      <div class="param-row"><span class="mono">null</span><span>Clear explicit preference, fall back to implicit learning</span></div>
+    </div>
+
+    <!-- DELETE /profile -->
+    <h2 id="profile-delete">DELETE /profile/:userId</h2>
+    <p>Delete a user's profile entirely. Use for GDPR / right-to-erasure requests.</p>
+    <div class="endpoint-badge delete">DELETE</div><code class="endpoint-path">/profile/:userId</code>
+
+    <!-- Topics -->
+    <h2 id="topics">Built-in topics</h2>
+    <p>ano recognises these 12 content domains out of the box:</p>
+    <div class="topic-grid">
+      <% ['military','aviation','politics','economy','technology','health','sports','food','science','entertainment','crime','business'].forEach(t => { %>
+        <div class="topic-chip"><%= t %></div>
+      <% }) %>
+    </div>
+
+    <!-- Event weights -->
+    <h2 id="events-ref">Event weights</h2>
+    <div class="param-table">
+      <div class="param-row header"><span>eventType</span><span>Weight</span><span>When to fire</span></div>
+      <div class="param-row"><span class="mono">share</span><span class="badge green">+0.15</span><span>User shares the post</span></div>
+      <div class="param-row"><span class="mono">like</span><span class="badge green">+0.10</span><span>User likes or upvotes</span></div>
+      <div class="param-row"><span class="mono">click</span><span class="badge green">+0.06</span><span>User clicks to read full post</span></div>
+      <div class="param-row"><span class="mono">view</span><span class="badge green">+0.03</span><span>Post visible in viewport 3+ seconds</span></div>
+      <div class="param-row"><span class="mono">skip</span><span class="badge red">-0.08</span><span>User scrolled past without stopping</span></div>
+      <div class="param-row"><span class="mono">hide</span><span class="badge red">-0.15</span><span>User explicitly hides or reports</span></div>
+    </div>
+
+    <!-- Errors -->
+    <h2 id="errors">Errors</h2>
+    <div class="param-table">
+      <div class="param-row header"><span>Status</span><span>Meaning</span></div>
+      <div class="param-row"><span class="mono">400</span><span>Bad request — missing or invalid fields</span></div>
+      <div class="param-row"><span class="mono">401</span><span>Missing or invalid API key</span></div>
+      <div class="param-row"><span class="mono">404</span><span>Profile or resource not found</span></div>
+      <div class="param-row"><span class="mono">500</span><span>Server error</span></div>
+    </div>
+
+    <div class="docs-footer">
+      <a href="/playground" class="btn btn-primary">Try it in the Playground →</a>
+    </div>
+
+  </article>
+</div>

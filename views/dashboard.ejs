@@ -1,0 +1,131 @@
+<!-- ── DASHBOARD ─────────────────────────────────────────────── -->
+
+<!-- Welcome bar -->
+<div class="welcome-bar">
+  <div>
+    <div class="welcome-name">Welcome back<% if (user.name) { %>, <%= user.name.split(' ')[0] %><% } %> 👋</div>
+    <div class="welcome-sub">Here's your integration overview for <strong><%= tenant.tenantId %></strong></div>
+  </div>
+  <div class="welcome-plan">
+    <span class="plan-badge"><%= tenant.plan || 'free' %></span>
+  </div>
+</div>
+
+<!-- API Key card — the most important thing on this page -->
+<div class="section-label mt-lg">Your API key</div>
+<div class="card api-key-card">
+  <div class="api-key-header">
+    <div>
+      <div class="card-label">Live key</div>
+      <div class="api-key-hint">Use this in your backend. Keep it secret — never expose it in client-side code.</div>
+    </div>
+    <span class="key-env env-live">live</span>
+  </div>
+
+  <% if (tenant.firstApiKey) { %>
+    <!-- First login — key visible once -->
+    <div class="api-key-new-banner">
+      <div class="api-key-new-label">🎉 Here's your API key — copy it now. It won't be shown in full again.</div>
+      <div class="api-key-row">
+        <code class="api-key-value" id="apiKeyValue"><%= tenant.firstApiKey %></code>
+        <button class="btn btn-ghost small" onclick="copyKey()">Copy</button>
+      </div>
+    </div>
+  <% } else { %>
+    <!-- Returning user -->
+    <div class="api-key-row">
+      <code class="api-key-value masked">ano_live_••••••••••••••••</code>
+      <button class="btn btn-ghost small" onclick="issueNewKey()">Issue new key</button>
+    </div>
+    <div class="api-key-sub">For security, full keys are only shown at creation time.</div>
+  <% } %>
+</div>
+
+<!-- Quick start -->
+<div class="section-label mt-lg">Quick start</div>
+<div class="card">
+  <div class="quickstart-steps">
+    <div class="qs-step">
+      <div class="qs-num">1</div>
+      <div class="qs-body">
+        <div class="qs-title">Onboard a new user</div>
+        <pre class="code-body small">POST /profile/{userId}/onboard
+x-ano-api-key: <span class="tok-keyword">your_key</span>
+
+{ "like": ["technology", "sports"], "dislike": ["food"] }</pre>
+      </div>
+    </div>
+    <div class="qs-step">
+      <div class="qs-num">2</div>
+      <div class="qs-body">
+        <div class="qs-title">Rank a feed</div>
+        <pre class="code-body small">POST /feed
+x-ano-api-key: <span class="tok-keyword">your_key</span>
+x-ano-user-id: <span class="tok-string">user_abc</span>
+
+{ "posts": [ { "id": "p1", "title": "...", "body": "..." } ] }</pre>
+      </div>
+    </div>
+    <div class="qs-step">
+      <div class="qs-num">3</div>
+      <div class="qs-body">
+        <div class="qs-title">Record engagement</div>
+        <pre class="code-body small">POST /event
+x-ano-api-key: <span class="tok-keyword">your_key</span>
+x-ano-user-id: <span class="tok-string">user_abc</span>
+
+{ "eventType": "like", "post": { "id": "p1", "title": "..." } }</pre>
+      </div>
+    </div>
+  </div>
+  <div class="qs-footer">
+    <a href="/docs" class="btn btn-ghost small">Full API reference →</a>
+    <a href="/playground" class="btn btn-primary small">Try in Playground →</a>
+  </div>
+</div>
+
+<!-- Stats row -->
+<div class="section-label mt-lg">Service</div>
+<div class="dash-grid">
+  <div class="card stat-card">
+    <div class="card-label">Status</div>
+    <div class="card-value green-text" id="statStatus">—</div>
+    <div class="card-sub" id="statUptime"></div>
+  </div>
+  <div class="card stat-card">
+    <div class="card-label">Firebase Project</div>
+    <div class="card-value mono small"><%= firebaseProject %></div>
+    <div class="card-sub">Firestore connected</div>
+  </div>
+  <div class="card stat-card">
+    <div class="card-label">Tenant ID</div>
+    <div class="card-value mono small"><%= tenant.tenantId %></div>
+    <div class="card-sub">Your namespace</div>
+  </div>
+  <div class="card stat-card">
+    <div class="card-label">Plan</div>
+    <div class="card-value"><%= tenant.plan || 'free' %></div>
+    <div class="card-sub">Member since <%= new Date(tenant.createdAt).toLocaleDateString() %></div>
+  </div>
+</div>
+
+<script>
+fetch('/health').then(r => r.json()).then(d => {
+  document.getElementById('statStatus').textContent = d.status === 'ok' ? '✓ live' : '✗ down';
+  document.getElementById('statUptime').textContent = 'uptime ' + d.uptime + 's';
+});
+
+function copyKey() {
+  const val = document.getElementById('apiKeyValue');
+  if (!val) return;
+  navigator.clipboard.writeText(val.textContent);
+  const btn = document.querySelector('.api-key-row .btn');
+  btn.textContent = '✓ Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 2000);
+}
+
+async function issueNewKey() {
+  if (!confirm('Issue a new API key? Your existing key will still work until you revoke it.')) return;
+  alert('Use the master key admin route to issue additional keys, or contact support.');
+}
+</script>
