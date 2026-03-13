@@ -1,0 +1,27 @@
+# ── Database ──────────────────────────────────────────────────
+data/
+data/*.db
+data/*.sqlite
+
+# ── Secrets / config ──────────────────────────────────────────
+config.php
+
+# ── PHP system config ─────────────────────────────────────────
+php.ini
+
+# ── Dev / setup utilities ─────────────────────────────────────
+debug.php
+fix_ssl.php
+fix_ssl.bat
+setup.php
+
+# ── OS garbage ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor ────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
