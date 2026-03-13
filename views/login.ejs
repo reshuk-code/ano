@@ -23,22 +23,10 @@
         <h1 class="auth-brand-headline">The feed algorithm<br/>your users deserve.</h1>
         <p class="auth-brand-sub">Sign in to get your API key and start building personalized feeds in minutes.</p>
         <div class="auth-features">
-          <div class="auth-feature">
-            <span class="auth-feature-dot"></span>
-            Drop-in REST API — no ML setup
-          </div>
-          <div class="auth-feature">
-            <span class="auth-feature-dot"></span>
-            Learns from every user interaction
-          </div>
-          <div class="auth-feature">
-            <span class="auth-feature-dot"></span>
-            Full explainability per ranked post
-          </div>
-          <div class="auth-feature">
-            <span class="auth-feature-dot"></span>
-            Multi-tenant — your users, your data
-          </div>
+          <div class="auth-feature"><span class="auth-feature-dot"></span>Drop-in REST API — no ML setup</div>
+          <div class="auth-feature"><span class="auth-feature-dot"></span>Learns from every user interaction</div>
+          <div class="auth-feature"><span class="auth-feature-dot"></span>Full explainability per ranked post</div>
+          <div class="auth-feature"><span class="auth-feature-dot"></span>Multi-tenant — your users, your data</div>
         </div>
       </div>
     </div>
@@ -51,8 +39,8 @@
           <p class="auth-card-sub">New? Your account is created automatically.</p>
         </div>
 
-        <!-- Error banner -->
         <div id="authError" class="auth-error hidden"></div>
+        <div id="authInfo" class="auth-info hidden"></div>
 
         <!-- OAuth buttons -->
         <div class="auth-oauth">
@@ -74,12 +62,8 @@
           </button>
         </div>
 
-        <!-- Divider -->
-        <div class="auth-divider">
-          <span>or sign in with email</span>
-        </div>
+        <div class="auth-divider"><span>or sign in with email</span></div>
 
-        <!-- Email/password form -->
         <form id="emailForm" class="auth-form" onsubmit="return false">
           <div class="auth-field">
             <label>Email</label>
@@ -94,34 +78,69 @@
             <button class="btn btn-ghost full-w" id="emailSignUpBtn" onclick="signUpEmail()">Create account</button>
           </div>
           <div class="auth-forgot">
-            <a href="#" onclick="resetPassword()">Forgot password?</a>
+            <a href="#" onclick="resetPassword(); return false;">Forgot password?</a>
           </div>
         </form>
 
-        <p class="auth-terms">
-          By signing in you agree to ano's terms of service.
-        </p>
+        <p class="auth-terms">By signing in you agree to ano's terms of service.</p>
       </div>
     </div>
-
   </div>
 
-  <!-- Firebase SDK (client-side only) -->
   <script type="module">
-    import { initializeApp }                    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, GithubAuthProvider,
-             signInWithPopup, signInWithEmailAndPassword,
-             createUserWithEmailAndPassword, sendPasswordResetEmail }
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      GithubAuthProvider,
+      signInWithRedirect,
+      getRedirectResult,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      sendPasswordResetEmail,
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = <%- JSON.stringify(firebaseConfig) %>;
-    const fbApp  = initializeApp(firebaseConfig);
-    const auth   = getAuth(fbApp);
+    const fbApp = initializeApp(firebaseConfig);
+    const auth  = getAuth(fbApp);
 
-    // ── After any successful sign-in ──────────────────────────
+    // ── Helpers ───────────────────────────────────────────────
+    function showError(msg) {
+      const el = document.getElementById("authError");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      document.getElementById("authInfo").classList.add("hidden");
+    }
+
+    function showInfo(msg) {
+      const el = document.getElementById("authInfo");
+      el.textContent = msg;
+      el.classList.remove("hidden");
+      document.getElementById("authError").classList.add("hidden");
+    }
+
+    function setLoading(id, loading, label) {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.disabled = loading;
+      btn.textContent = loading ? (label || "Signing in…") : btn.dataset.orig;
+      if (!loading && btn.dataset.orig) btn.innerHTML = btn.dataset.origHtml;
+    }
+
+    function saveButtonHtml() {
+      ["googleBtn","githubBtn","emailSignInBtn","emailSignUpBtn"].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.dataset.origHtml = btn.innerHTML;
+      });
+    }
+
+    // ── Post-sign-in: send token to server, get session cookie ─
     async function handleSignIn(userCredential) {
+      if (!userCredential) return;
       const user    = userCredential.user;
       const idToken = await user.getIdToken();
+
+      showInfo("Setting up your account…");
 
       const res = await fetch("/auth/session", {
         method : "POST",
@@ -140,86 +159,96 @@
       if (res.ok) {
         window.location.href = "/dashboard";
       } else {
-        const d = await res.json();
+        const d = await res.json().catch(() => ({}));
         showError(d.error || "Sign-in failed. Please try again.");
       }
     }
 
-    function showError(msg) {
-      const el = document.getElementById("authError");
-      el.textContent = msg;
-      el.classList.remove("hidden");
-    }
+    // ── On page load: check if we just came back from a redirect ─
+    saveButtonHtml();
 
-    function setLoading(id, loading) {
-      const btn = document.getElementById(id);
-      btn.disabled = loading;
-      if (loading) btn.dataset.orig = btn.textContent;
-      btn.textContent = loading ? "Signing in…" : btn.dataset.orig;
-    }
+    getRedirectResult(auth)
+      .then(result => {
+        if (result) handleSignIn(result);
+      })
+      .catch(e => {
+        if (e.code !== "auth/no-current-user") showError(e.message);
+      });
 
-    // Google
+    // ── Google (redirect) ─────────────────────────────────────
     window.signInGoogle = async () => {
-      setLoading("googleBtn", true);
       try {
-        await handleSignIn(await signInWithPopup(auth, new GoogleAuthProvider()));
+        document.getElementById("googleBtn").textContent = "Redirecting…";
+        document.getElementById("googleBtn").disabled = true;
+        await signInWithRedirect(auth, new GoogleAuthProvider());
       } catch (e) {
-        showError(e.code === "auth/popup-closed-by-user" ? "Sign-in cancelled." : e.message);
-        setLoading("googleBtn", false);
+        showError(e.message);
+        document.getElementById("googleBtn").disabled = false;
+        document.getElementById("googleBtn").innerHTML = document.getElementById("googleBtn").dataset.origHtml;
       }
     };
 
-    // GitHub
+    // ── GitHub (redirect) ─────────────────────────────────────
     window.signInGithub = async () => {
-      setLoading("githubBtn", true);
       try {
-        await handleSignIn(await signInWithPopup(auth, new GithubAuthProvider()));
+        document.getElementById("githubBtn").textContent = "Redirecting…";
+        document.getElementById("githubBtn").disabled = true;
+        await signInWithRedirect(auth, new GithubAuthProvider());
       } catch (e) {
-        showError(e.code === "auth/popup-closed-by-user" ? "Sign-in cancelled." : e.message);
-        setLoading("githubBtn", false);
+        showError(e.message);
+        document.getElementById("githubBtn").disabled = false;
+        document.getElementById("githubBtn").innerHTML = document.getElementById("githubBtn").dataset.origHtml;
       }
     };
 
-    // Email sign in
+    // ── Email sign in ─────────────────────────────────────────
     window.signInEmail = async () => {
       const email    = document.getElementById("authEmail").value.trim();
       const password = document.getElementById("authPassword").value;
       if (!email || !password) return showError("Enter your email and password.");
-      setLoading("emailSignInBtn", true);
+      document.getElementById("emailSignInBtn").textContent = "Signing in…";
+      document.getElementById("emailSignInBtn").disabled = true;
       try {
         await handleSignIn(await signInWithEmailAndPassword(auth, email, password));
       } catch (e) {
-        showError(e.code === "auth/wrong-password" || e.code === "auth/user-not-found"
-          ? "Incorrect email or password." : e.message);
-        setLoading("emailSignInBtn", false);
+        showError(
+          e.code === "auth/wrong-password" || e.code === "auth/user-not-found" || e.code === "auth/invalid-credential"
+            ? "Incorrect email or password."
+            : e.message
+        );
+        document.getElementById("emailSignInBtn").disabled = false;
+        document.getElementById("emailSignInBtn").textContent = "Sign in";
       }
     };
 
-    // Email sign up
+    // ── Email sign up ─────────────────────────────────────────
     window.signUpEmail = async () => {
       const email    = document.getElementById("authEmail").value.trim();
       const password = document.getElementById("authPassword").value;
-      if (!email || !password) return showError("Enter your email and a password (min 6 chars).");
-      if (password.length < 6) return showError("Password must be at least 6 characters.");
-      setLoading("emailSignUpBtn", true);
+      if (!email || !password) return showError("Enter your email and a password.");
+      if (password.length < 6)  return showError("Password must be at least 6 characters.");
+      document.getElementById("emailSignUpBtn").textContent = "Creating account…";
+      document.getElementById("emailSignUpBtn").disabled = true;
       try {
         await handleSignIn(await createUserWithEmailAndPassword(auth, email, password));
       } catch (e) {
-        showError(e.code === "auth/email-already-in-use"
-          ? "That email is already registered. Try signing in instead." : e.message);
-        setLoading("emailSignUpBtn", false);
+        showError(
+          e.code === "auth/email-already-in-use"
+            ? "That email is already registered. Try signing in instead."
+            : e.message
+        );
+        document.getElementById("emailSignUpBtn").disabled = false;
+        document.getElementById("emailSignUpBtn").textContent = "Create account";
       }
     };
 
-    // Password reset
+    // ── Password reset ────────────────────────────────────────
     window.resetPassword = async () => {
       const email = document.getElementById("authEmail").value.trim();
       if (!email) return showError("Enter your email address first.");
       try {
         await sendPasswordResetEmail(auth, email);
-        showError("Reset email sent — check your inbox.");
-        document.getElementById("authError").style.borderColor = "var(--accent)";
-        document.getElementById("authError").style.color = "var(--accent)";
+        showInfo("Password reset email sent — check your inbox.");
       } catch (e) {
         showError(e.message);
       }

@@ -314,6 +314,17 @@ body.auth-body { display: block; background: var(--bg-0); }
 }
 .auth-error.hidden { display: none; }
 
+.auth-info {
+  background: var(--accent-glow);
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+.auth-info.hidden { display: none; }
+
 .auth-oauth { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
 .oauth-btn {
   display: flex; align-items: center; justify-content: center; gap: 10px;

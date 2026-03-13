@@ -16,6 +16,10 @@
   ],
   "routes": [
     {
+      "src": "/__/auth/(.*)",
+      "dest": "https://anoo-938a6.firebaseapp.com/__/auth/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "api/index.js"
     }
