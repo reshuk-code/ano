@@ -1,6 +1,6 @@
 {
   "name": "ano",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Personalized feed algorithm as a service. Drop it into any platform — news apps, social networks, content aggregators.",
   "main": "server.js",
   "scripts": {

@@ -333,15 +333,17 @@ app.use((req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// START
+// START — only listen when running locally, not on Vercel
 // ─────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n  ┌──────────────────────────────────────────────┐`);
-  console.log(`  │  ano  feed engine                            │`);
-  console.log(`  │  http://localhost:${PORT}                       │`);
-  console.log(`  │  ENV      : ${NODE_ENV.padEnd(33)}│`);
-  console.log(`  │  Firebase : ${(process.env.FIREBASE_PROJECT_ID||"not set").padEnd(33)}│`);
-  console.log(`  └──────────────────────────────────────────────┘\n`);
-});
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`\n  ┌──────────────────────────────────────────────┐`);
+    console.log(`  │  ano  feed engine                            │`);
+    console.log(`  │  http://localhost:${PORT}                       │`);
+    console.log(`  │  ENV      : ${NODE_ENV.padEnd(33)}│`);
+    console.log(`  │  Firebase : ${(process.env.FIREBASE_PROJECT_ID||"not set").padEnd(33)}│`);
+    console.log(`  └──────────────────────────────────────────────┘\n`);
+  });
+}
 
 module.exports = app;
