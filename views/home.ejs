@@ -1,270 +1,283 @@
-<!-- ── LANDING PAGE ───────────────────────────────────────────── -->
-
-<!-- Hero -->
-<section class="hero">
-  <div class="hero-eyebrow">Feed personalization · API-first · No ML required</div>
-  <h1 class="hero-headline">
-    Add a personalized<br/>
-    feed to your app<br/>
-    in <em>one afternoon</em>.
-  </h1>
-  <p class="hero-sub">
-    ano is a REST API that ranks your content by what each user actually cares about.
-    You send posts. We return them ranked. The feed gets smarter with every interaction.
-  </p>
-  <div class="hero-cta">
-    <% if (user) { %>
-      <a href="/dashboard" class="btn btn-primary">Go to Dashboard →</a>
-    <% } else { %>
-      <a href="/login" class="btn btn-primary">Get your API key — it's free</a>
-    <% } %>
-    <a href="/docs" class="btn btn-ghost">Read the docs →</a>
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<section class="lp-hero">
+  <div class="lp-hero-glow"></div>
+  <div class="lp-hero-inner">
+    <div class="lp-hero-eyebrow">
+      <span class="lp-eyebrow-dot"></span>
+      Feed personalization · API-first · No ML required
+    </div>
+    <h1 class="lp-hero-h1">
+      Add personalized feeds<br/>
+      to your app<br/>
+      <span class="lp-h1-accent">in one afternoon.</span>
+    </h1>
+    <p class="lp-hero-sub">
+      ano is a REST API that ranks your content by what each user actually cares about.
+      You send posts, we return them ranked. The feed improves with every interaction.
+    </p>
+    <div class="lp-hero-cta">
+      <% if (user) { %>
+        <a href="/dashboard" class="btn btn-primary btn-lg">Go to Dashboard →</a>
+      <% } else { %>
+        <a href="/login" class="btn btn-primary btn-lg">Get your API key — it's free</a>
+      <% } %>
+      <a href="#demo" class="btn btn-ghost btn-lg">See the demo</a>
+    </div>
+    <div class="lp-hero-proof">
+      <span class="lp-proof-item"><span class="lp-proof-dot"></span>No training data needed</span>
+      <span class="lp-proof-sep">·</span>
+      <span class="lp-proof-item"><span class="lp-proof-dot"></span>Works from day one</span>
+      <span class="lp-proof-sep">·</span>
+      <span class="lp-proof-item"><span class="lp-proof-dot"></span>Any content type</span>
+    </div>
   </div>
-  <div class="hero-social-proof">Used to power news feeds, content apps, and social platforms.</div>
+
+  <!-- Hero code block -->
+  <div class="lp-hero-code">
+    <div class="code-window">
+      <div class="code-topbar">
+        <span class="code-dot red"></span>
+        <span class="code-dot yellow"></span>
+        <span class="code-dot green"></span>
+        <span class="code-filename">integrate.js</span>
+        <span class="lp-code-lines">12 lines</span>
+      </div>
+      <pre class="code-body"><span class="tok-comment">// 1. Onboard a new user (once)</span>
+<span class="tok-keyword">await</span> fetch(<span class="tok-string">"/profile/user_123/onboard"</span>, {
+  method : <span class="tok-string">"POST"</span>,
+  headers: { <span class="tok-string">"x-ano-api-key"</span>: key },
+  body   : JSON.stringify({ like: [<span class="tok-string">"tech"</span>, <span class="tok-string">"science"</span>] })
+});
+
+<span class="tok-comment">// 2. Get a ranked feed (every page load)</span>
+<span class="tok-keyword">const</span> { feed } = <span class="tok-keyword">await</span> fetch(<span class="tok-string">"/feed"</span>, {
+  method : <span class="tok-string">"POST"</span>,
+  headers: { <span class="tok-string">"x-ano-api-key"</span>: key, <span class="tok-string">"x-ano-user-id"</span>: userId },
+  body   : JSON.stringify({ posts: yourPosts })
+}).then(r => r.json());
+<span class="tok-comment">// feed[0] = most relevant post for this user ✓</span></pre>
+    </div>
+  </div>
 </section>
 
-<!-- The problem -->
-<section class="section">
-  <div class="section-label">The problem</div>
-  <div class="problem-grid">
-    <div class="problem-card bad">
-      <div class="problem-icon">✗</div>
+<!-- ── STATS BAR ───────────────────────────────────────────── -->
+<div class="lp-stats">
+  <div class="lp-stat"><div class="lp-stat-n">6</div><div class="lp-stat-l">Engagement signals</div></div>
+  <div class="lp-stat-sep"></div>
+  <div class="lp-stat"><div class="lp-stat-n">12</div><div class="lp-stat-l">Topic categories</div></div>
+  <div class="lp-stat-sep"></div>
+  <div class="lp-stat"><div class="lp-stat-n">24h</div><div class="lp-stat-l">Recency half-life</div></div>
+  <div class="lp-stat-sep"></div>
+  <div class="lp-stat"><div class="lp-stat-n">0ms</div><div class="lp-stat-l">Training time needed</div></div>
+</div>
+
+<!-- ── PROBLEM / SOLUTION ─────────────────────────────────── -->
+<section class="lp-section lp-compare" id="problem">
+  <div class="lp-section-label">The problem</div>
+  <div class="lp-compare-grid">
+    <div class="lp-compare-card lp-bad">
+      <div class="lp-compare-icon lp-bad-icon">✗</div>
       <h3>Without ano</h3>
       <ul>
-        <li>Every user sees the same feed</li>
-        <li>No signal from user behaviour</li>
-        <li>Building a ranking system takes months</li>
-        <li>Training ML models needs huge data</li>
+        <li>Every user sees the identical feed</li>
+        <li>Zero signal from user behaviour</li>
+        <li>Building a ranker takes months of engineering</li>
+        <li>Needs massive data to train ML models</li>
       </ul>
     </div>
-    <div class="problem-card good">
-      <div class="problem-icon">✓</div>
+    <div class="lp-compare-divider">vs</div>
+    <div class="lp-compare-card lp-good">
+      <div class="lp-compare-icon lp-good-icon">✓</div>
       <h3>With ano</h3>
       <ul>
-        <li>Every user gets posts ranked for them</li>
-        <li>Learns from likes, shares, skips</li>
-        <li>Integrate in a single afternoon</li>
-        <li>No model training — works on day one</li>
+        <li>Every user gets a feed ranked for them</li>
+        <li>Learns from likes, shares, skips automatically</li>
+        <li>One afternoon to integrate, not months</li>
+        <li>No model training — relevance from day one</li>
       </ul>
     </div>
   </div>
 </section>
 
-<!-- How it works -->
-<section class="section">
-  <div class="section-label">How it works</div>
-  <div class="flow-grid">
-    <div class="flow-step">
-      <div class="flow-num">01</div>
-      <div class="flow-icon">
+<!-- ── HOW IT WORKS ───────────────────────────────────────── -->
+<section class="lp-section" id="how-it-works">
+  <div class="lp-section-label">How it works</div>
+  <h2 class="lp-section-h2">Three API calls to integrate.</h2>
+  <div class="lp-steps">
+    <div class="lp-step">
+      <div class="lp-step-num">01</div>
+      <div class="lp-step-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </div>
       <h3>You send posts</h3>
-      <p>Pass any array of posts with title, body, and timestamp. ano extracts topic signals using NLP — no setup needed.</p>
+      <p>Pass any array of content — title, body, timestamp. ano extracts topic signals automatically using NLP. Zero configuration.</p>
+      <div class="lp-step-endpoint"><span class="endpoint-badge post">POST</span>/feed</div>
     </div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">
-      <div class="flow-num">02</div>
-      <div class="flow-icon">
+    <div class="lp-step-arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </div>
+    <div class="lp-step">
+      <div class="lp-step-num">02</div>
+      <div class="lp-step-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>
       <h3>ano profiles the user</h3>
-      <p>Each of your users gets a preference profile. It learns from explicit choices and implicit signals like shares and skips.</p>
+      <p>Each user gets a preference profile that learns from explicit choices and implicit signals — likes, shares, skips, views.</p>
+      <div class="lp-step-endpoint"><span class="endpoint-badge post">POST</span>/event</div>
     </div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-step">
-      <div class="flow-num">03</div>
-      <div class="flow-icon">
+    <div class="lp-step-arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </div>
+    <div class="lp-step">
+      <div class="lp-step-num">03</div>
+      <div class="lp-step-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       </div>
       <h3>You get a ranked feed</h3>
-      <p>Posts come back sorted by relevance with a full score breakdown. Show users <em>why</em> they're seeing each post.</p>
+      <p>Posts come back sorted by relevance with a full score breakdown. Show users <em>exactly why</em> they're seeing each post.</p>
+      <div class="lp-step-endpoint"><span class="endpoint-badge get">GET</span>/profile/:id</div>
     </div>
   </div>
 </section>
 
-<!-- Code sample -->
-<section class="section">
-  <div class="section-label">What the integration looks like</div>
-  <div class="code-window">
-    <div class="code-topbar">
-      <span class="code-dot red"></span>
-      <span class="code-dot yellow"></span>
-      <span class="code-dot green"></span>
-      <span class="code-filename">your-backend.js</span>
-    </div>
-    <pre class="code-body"><span class="tok-comment">// Every time a user opens their feed:</span>
-<span class="tok-keyword">const</span> res = <span class="tok-keyword">await</span> fetch(<span class="tok-string">"https://your-ano-url/feed"</span>, {
-  method : <span class="tok-string">"POST"</span>,
-  headers: {
-    <span class="tok-string">"x-ano-api-key"</span> : <span class="tok-string">"ano_live_xxxx"</span>,   <span class="tok-comment">// your key from the dashboard</span>
-    <span class="tok-string">"x-ano-user-id"</span> : currentUser.id,        <span class="tok-comment">// your existing user ID</span>
-    <span class="tok-string">"Content-Type"</span>  : <span class="tok-string">"application/json"</span>,
-  },
-  body: JSON.stringify({ posts: allPosts }),  <span class="tok-comment">// your content, any format</span>
-});
-
-<span class="tok-keyword">const</span> { feed } = <span class="tok-keyword">await</span> res.json();
-<span class="tok-comment">// feed[0] is the most relevant post for this specific user ✓</span>
-<span class="tok-comment">// feed[0]._score.breakdown explains exactly why it ranked first</span></pre>
-  </div>
-</section>
-
-<!-- Topic taxonomy -->
-<section class="section">
-  <div class="section-label">Built-in topic intelligence</div>
-  <p class="section-desc">ano understands 12 content domains out of the box — no configuration, no training data required.</p>
-  <div class="topic-grid">
-    <% ['military','aviation','politics','economy','technology','health','sports','food','science','entertainment','crime','business'].forEach(t => { %>
-      <div class="topic-chip"><%= t %></div>
+<!-- ── TOPICS ─────────────────────────────────────────────── -->
+<section class="lp-section lp-topics-section">
+  <div class="lp-section-label">Built-in topic intelligence</div>
+  <h2 class="lp-section-h2">12 content domains, built in.</h2>
+  <p class="lp-section-p">ano understands topic signals automatically. No training data, no labelling, no configuration required.</p>
+  <div class="lp-topic-chips">
+    <% [
+      {t:'military',icon:'⚔️'},{t:'aviation',icon:'✈️'},{t:'politics',icon:'🏛️'},
+      {t:'economy',icon:'📈'},{t:'technology',icon:'💻'},{t:'health',icon:'🏥'},
+      {t:'sports',icon:'⚽'},{t:'food',icon:'🍜'},{t:'science',icon:'🔬'},
+      {t:'entertainment',icon:'🎬'},{t:'crime',icon:'🔍'},{t:'business',icon:'💼'}
+    ].forEach(({t,icon}) => { %>
+      <div class="lp-topic-chip"><span><%= icon %></span><%= t %></div>
     <% }) %>
   </div>
 </section>
 
-<!-- Stats -->
-<section class="stat-strip">
-  <div class="stat"><div class="stat-num">6</div><div class="stat-label">Engagement signals</div></div>
-  <div class="stat-divider"></div>
-  <div class="stat"><div class="stat-num">2×</div><div class="stat-label">Title weight vs body</div></div>
-  <div class="stat-divider"></div>
-  <div class="stat"><div class="stat-num">24h</div><div class="stat-label">Recency half-life</div></div>
-  <div class="stat-divider"></div>
-  <div class="stat"><div class="stat-num">0ms</div><div class="stat-label">Training time needed</div></div>
-</section>
-
 <!-- ── LIVE DEMO ──────────────────────────────────────────── -->
-<section class="section" id="demo">
-  <div class="section-label">Live demo — try it now</div>
-  <p class="section-desc">Pick topics below and watch the algorithm rank these posts in real time. Powered by the actual ano API.</p>
+<section class="lp-section lp-demo-section" id="demo">
+  <div class="lp-section-label">Live demo</div>
+  <h2 class="lp-section-h2">Try it yourself.</h2>
+  <p class="lp-section-p">Select your interests, hit rank, and see how the API orders these posts for your preference profile. This is calling the real ano API.</p>
 
   <div class="demo-shell">
-    <!-- Left: controls -->
     <div class="demo-controls">
       <div class="demo-block">
-        <div class="demo-block-label">1 · Your interests</div>
+        <div class="demo-block-label">1 · Your interests <span style="color:var(--text-3);font-weight:400">(click = like · right-click = dislike)</span></div>
         <div class="demo-topic-grid" id="demoTopics"></div>
       </div>
       <div class="demo-block">
-        <div class="demo-block-label">2 · User ID</div>
+        <div class="demo-block-label">2 · User handle</div>
         <div class="demo-uid-row">
           <span class="demo-uid-at">@</span>
           <input id="demoUid" type="text" value="demo_visitor" placeholder="your_handle" class="demo-uid-input" />
         </div>
       </div>
-      <button id="demoRunBtn" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px">↻ Rank my feed</button>
+      <button id="demoRunBtn" class="btn btn-primary" style="width:100%;justify-content:center">↻ Rank my feed</button>
       <div id="demoStatus" class="demo-status hidden"></div>
     </div>
-
-    <!-- Right: ranked output -->
     <div class="demo-output">
       <div class="demo-output-header">
         <span class="demo-output-title">Ranked Feed</span>
         <span id="demoCount" class="demo-output-count"></span>
       </div>
       <div id="demoFeed" class="demo-feed">
-        <div class="demo-empty">← Set your interests and hit Rank</div>
+        <div class="demo-empty">← Pick topics and hit rank to see the algorithm live</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── APP PREVIEWS ────────────────────────────────────────── -->
-<section class="section" id="apps">
-  <div class="section-label">Built with ano</div>
-  <p class="section-desc">Two full demo apps showing ano running in different product contexts. Open them to see the algorithm live.</p>
+<!-- ── APP PREVIEWS ──────────────────────────────────────── -->
+<section class="lp-section" id="apps">
+  <div class="lp-section-label">Built with ano</div>
+  <h2 class="lp-section-h2">Example apps built with ano.</h2>
+  <p class="lp-section-p">Two complete demo apps showing ano in different product contexts. Open either one to see the ranking algorithm in action.</p>
 
   <div class="apps-grid">
-    <!-- News portal -->
-    <div class="app-card" id="appCardNews">
+    <div class="app-card">
       <div class="app-card-header">
-        <div class="app-badge">News</div>
-        <div class="app-card-actions">
-          <a href="/ano-app/news-portal/index.html" target="_blank" class="btn btn-ghost" style="font-size:11px;padding:5px 12px">Open app ↗</a>
-        </div>
+        <div class="app-badge">News Portal</div>
+        <a href="/ano-app/news-portal/index.html" target="_blank" class="btn btn-ghost btn-sm">Open app ↗</a>
       </div>
       <div class="app-title">PULSE</div>
-      <p class="app-desc">An editorial news feed. Articles ranked by your topic preferences with a transparency score breakdown per post.</p>
+      <p class="app-desc">An editorial news feed. Articles ranked by your topic preferences with a per-post transparency score breakdown.</p>
       <div class="app-tags">
         <span class="app-tag">/feed</span>
         <span class="app-tag">/event</span>
         <span class="app-tag">/onboard</span>
       </div>
-      <!-- Mock preview -->
       <div class="app-preview news-preview">
         <div class="np-header"><span class="np-logo">PULSE</span><span class="np-sub">Powered by ano</span></div>
         <div class="np-feed">
-          <div class="np-card" id="npCard1">
+          <div class="np-card">
             <div class="np-rank">1</div>
             <div class="np-body">
-              <div class="np-tag" id="npTag1">tech</div>
-              <div class="np-title" id="npTitle1">Loading ranked feed…</div>
-              <div class="np-bar"><div class="np-bar-fill" id="npBar1" style="width:0%"></div></div>
+              <div class="np-tag" id="npTag1">technology</div>
+              <div class="np-title" id="npTitle1">GPT-5 drops with real-time multi-step reasoning</div>
+              <div class="np-bar"><div class="np-bar-fill" id="npBar1" style="width:92%"></div></div>
             </div>
           </div>
-          <div class="np-card" id="npCard2">
+          <div class="np-card">
             <div class="np-rank">2</div>
             <div class="np-body">
-              <div class="np-tag" id="npTag2">—</div>
-              <div class="np-title" id="npTitle2">—</div>
-              <div class="np-bar"><div class="np-bar-fill" id="npBar2" style="width:0%"></div></div>
+              <div class="np-tag" id="npTag2">science</div>
+              <div class="np-title" id="npTitle2">NASA confirms liquid water ocean on Europa</div>
+              <div class="np-bar"><div class="np-bar-fill" id="npBar2" style="width:74%"></div></div>
             </div>
           </div>
-          <div class="np-card" id="npCard3">
+          <div class="np-card">
             <div class="np-rank">3</div>
             <div class="np-body">
-              <div class="np-tag" id="npTag3">—</div>
-              <div class="np-title" id="npTitle3">—</div>
-              <div class="np-bar"><div class="np-bar-fill" id="npBar3" style="width:0%"></div></div>
+              <div class="np-tag" id="npTag3">economy</div>
+              <div class="np-title" id="npTitle3">Fed signals rate cuts as inflation eases</div>
+              <div class="np-bar"><div class="np-bar-fill" id="npBar3" style="width:58%"></div></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Social media -->
-    <div class="app-card" id="appCardSocial">
+    <div class="app-card">
       <div class="app-card-header">
-        <div class="app-badge social">Social</div>
-        <div class="app-card-actions">
-          <a href="/ano-app/social-media/index.html" target="_blank" class="btn btn-ghost" style="font-size:11px;padding:5px 12px">Open app ↗</a>
-        </div>
+        <div class="app-badge social">Social Feed</div>
+        <a href="/ano-app/social-media/index.html" target="_blank" class="btn btn-ghost btn-sm">Open app ↗</a>
       </div>
-      <div class="app-title" style="font-size:22px">vibe<span style="color:var(--accent)">.</span></div>
-      <p class="app-desc">A social feed ranked by relevance. Posts from different creators sorted by what matters to you, with live event tracking.</p>
+      <div class="app-title" style="font-size:24px">vibe<span style="color:var(--accent)">.</span></div>
+      <p class="app-desc">A social feed ranked by relevance. Creators' posts sorted by what matters to you, with live engagement signal tracking.</p>
       <div class="app-tags">
         <span class="app-tag">/feed</span>
         <span class="app-tag">/event</span>
         <span class="app-tag">/onboard</span>
         <span class="app-tag">view signals</span>
       </div>
-      <!-- Mock preview -->
       <div class="app-preview social-preview">
-        <div class="sp-header">
-          <span class="sp-logo">vibe.</span>
-          <span class="sp-tab active">For You</span>
-        </div>
+        <div class="sp-header"><span class="sp-logo">vibe.</span><span class="sp-tab active">For You</span></div>
         <div class="sp-feed">
-          <div class="sp-post" id="spPost1">
-            <div class="sp-avatar" id="spAv1">P</div>
+          <div class="sp-post">
+            <div class="sp-avatar" style="background:#6c63ff">P</div>
             <div class="sp-content">
-              <div class="sp-author">@priya_builds <span class="sp-score" id="spScore1">…</span></div>
-              <div class="sp-text" id="spText1">Loading feed…</div>
+              <div class="sp-author">@priya_builds <span class="sp-score" id="spScore1">92%</span></div>
+              <div class="sp-text" id="spText1">GPT-5 dropped and honestly the multi-step reasoning is insane.</div>
               <div class="sp-actions">👍 &nbsp; ↗ &nbsp; ✕</div>
             </div>
           </div>
-          <div class="sp-post" id="spPost2">
-            <div class="sp-avatar" id="spAv2">M</div>
+          <div class="sp-post">
+            <div class="sp-avatar" id="spAv2" style="background:#a29bfe">N</div>
             <div class="sp-content">
-              <div class="sp-author">@mchen_dev <span class="sp-score" id="spScore2">…</span></div>
-              <div class="sp-text" id="spText2">—</div>
+              <div class="sp-author">@dr_voss_astro <span class="sp-score" id="spScore2">74%</span></div>
+              <div class="sp-text" id="spText2">Europa. Liquid water. Confirmed. I've waited my career for this.</div>
               <div class="sp-actions">👍 &nbsp; ↗ &nbsp; ✕</div>
             </div>
           </div>
-          <div class="sp-post" id="spPost3">
-            <div class="sp-avatar" id="spAv3">A</div>
+          <div class="sp-post">
+            <div class="sp-avatar" id="spAv3" style="background:#00d4aa">A</div>
             <div class="sp-content">
-              <div class="sp-author">@aisha_trades <span class="sp-score" id="spScore3">…</span></div>
-              <div class="sp-text" id="spText3">—</div>
+              <div class="sp-author">@aisha_trades <span class="sp-score" id="spScore3">58%</span></div>
+              <div class="sp-text" id="spText3">Bitcoin at $120k. My dad called asking if he should buy 😅</div>
               <div class="sp-actions">👍 &nbsp; ↗ &nbsp; ✕</div>
             </div>
           </div>
@@ -274,16 +287,20 @@
   </div>
 </section>
 
-<!-- CTA -->
-<section class="section cta-section">
-  <h2 class="cta-headline">Ready to build?</h2>
-  <p class="cta-sub">Get your API key in 30 seconds. Free to start.</p>
-  <div class="hero-cta">
-    <% if (user) { %>
-      <a href="/dashboard" class="btn btn-primary">Go to Dashboard →</a>
-    <% } else { %>
-      <a href="/login" class="btn btn-primary">Sign up free →</a>
-    <% } %>
-    <a href="/docs" class="btn btn-ghost">Read the docs</a>
+<!-- ── FINAL CTA ───────────────────────────────────────────── -->
+<section class="lp-cta-section">
+  <div class="lp-cta-glow"></div>
+  <div class="lp-cta-inner">
+    <div class="lp-cta-label">Get started</div>
+    <h2 class="lp-cta-h2">Start building today.</h2>
+    <p class="lp-cta-sub">Free to start. Get your API key in under a minute.</p>
+    <div class="lp-cta-btns">
+      <% if (user) { %>
+        <a href="/dashboard" class="btn btn-primary btn-lg">Go to Dashboard →</a>
+      <% } else { %>
+        <a href="/login" class="btn btn-primary btn-lg">Get started for free</a>
+      <% } %>
+      <a href="/docs" class="btn btn-ghost btn-lg">Read the docs</a>
+    </div>
   </div>
 </section>

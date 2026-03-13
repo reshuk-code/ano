@@ -216,6 +216,27 @@ function updatePreviews(ranked) {
 
 initDemo();
 
+// Responsive navbar
+(function() {
+  const btn = document.getElementById('navHamburger');
+  const links = document.getElementById('navLinks');
+  const actions = document.getElementById('navActions');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const open = btn.classList.toggle('open');
+    links && links.classList.toggle('open', open);
+    actions && actions.classList.toggle('open', open);
+  });
+  // Close menu when a nav link is clicked
+  document.querySelectorAll('.land-nav-link').forEach(a => {
+    a.addEventListener('click', () => {
+      btn.classList.remove('open');
+      links && links.classList.remove('open');
+      actions && actions.classList.remove('open');
+    });
+  });
+})();
+
 // Health pill
 fetch('/health')
   .then(r => r.json())

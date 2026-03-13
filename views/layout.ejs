@@ -9,8 +9,64 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/style.css"/>
 </head>
-<body>
+<body class="<%= page === 'home' ? 'page-home' : '' %>">
 
+<% if (page === 'home') { %>
+  <!-- ── FULL-WIDTH LANDING LAYOUT ── -->
+  <div class="land-wrap">
+
+    <!-- Navbar -->
+    <nav class="land-nav">
+      <a href="/" class="land-nav-logo">
+        <div class="logo-mark">a</div>
+        <span class="logo-text">ano</span>
+      </a>
+
+      <!-- Hamburger (mobile) -->
+      <button class="land-nav-hamburger" id="navHamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="land-nav-links" id="navLinks">
+        <a href="#how-it-works" class="land-nav-link">How it works</a>
+        <a href="#demo" class="land-nav-link">Demo</a>
+        <a href="#apps" class="land-nav-link">Examples</a>
+        <a href="/docs" class="land-nav-link">Docs</a>
+      </div>
+      <div class="land-nav-actions" id="navActions">
+        <% if (user) { %>
+          <a href="/dashboard" class="btn btn-ghost btn-sm">Dashboard</a>
+        <% } else { %>
+          <a href="/login" class="btn btn-ghost btn-sm">Sign in</a>
+          <a href="/login" class="btn btn-primary btn-sm">Get started</a>
+        <% } %>
+      </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="land-content">
+      <%- body %>
+    </div>
+
+    <!-- Footer -->
+    <footer class="land-footer">
+      <div class="land-footer-inner">
+        <div class="land-footer-logo">
+          <div class="logo-mark" style="width:22px;height:22px;font-size:13px">a</div>
+          <span style="font-weight:700;font-size:14px">ano</span>
+          <span class="land-footer-tag">feed engine · v2.0.0</span>
+        </div>
+        <div class="land-footer-links">
+          <a href="/docs">Docs</a>
+          <a href="/health">Status</a>
+          <a href="#demo">Demo</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+<% } else { %>
+  <!-- ── APP LAYOUT (sidebar) ── -->
   <aside class="sidebar">
     <div class="sidebar-logo">
       <a href="/" class="sidebar-logo-link">
@@ -21,7 +77,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a href="/" class="nav-item <%= page === 'home' ? 'active' : '' %>">
+      <a href="/" class="nav-item">
         <svg viewBox="0 0 16 16" fill="none">
           <path d="M1 6.5L8 1l7 5.5V15H10v-4H6v4H1V6.5z" stroke-width="1.5" stroke-linejoin="round"/>
         </svg>
@@ -93,10 +149,10 @@
       <%- body %>
     </div>
   </main>
+<% } %>
 
   <script src="/app.js"></script>
   <% if (user) { %>
-  <!-- Firebase logout (only loaded when user is signed in) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
