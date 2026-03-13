@@ -132,6 +132,148 @@
   <div class="stat"><div class="stat-num">0ms</div><div class="stat-label">Training time needed</div></div>
 </section>
 
+<!-- ── LIVE DEMO ──────────────────────────────────────────── -->
+<section class="section" id="demo">
+  <div class="section-label">Live demo — try it now</div>
+  <p class="section-desc">Pick topics below and watch the algorithm rank these posts in real time. Powered by the actual ano API.</p>
+
+  <div class="demo-shell">
+    <!-- Left: controls -->
+    <div class="demo-controls">
+      <div class="demo-block">
+        <div class="demo-block-label">1 · Your interests</div>
+        <div class="demo-topic-grid" id="demoTopics"></div>
+      </div>
+      <div class="demo-block">
+        <div class="demo-block-label">2 · User ID</div>
+        <div class="demo-uid-row">
+          <span class="demo-uid-at">@</span>
+          <input id="demoUid" type="text" value="demo_visitor" placeholder="your_handle" class="demo-uid-input" />
+        </div>
+      </div>
+      <button id="demoRunBtn" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px">↻ Rank my feed</button>
+      <div id="demoStatus" class="demo-status hidden"></div>
+    </div>
+
+    <!-- Right: ranked output -->
+    <div class="demo-output">
+      <div class="demo-output-header">
+        <span class="demo-output-title">Ranked Feed</span>
+        <span id="demoCount" class="demo-output-count"></span>
+      </div>
+      <div id="demoFeed" class="demo-feed">
+        <div class="demo-empty">← Set your interests and hit Rank</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APP PREVIEWS ────────────────────────────────────────── -->
+<section class="section" id="apps">
+  <div class="section-label">Built with ano</div>
+  <p class="section-desc">Two full demo apps showing ano running in different product contexts. Open them to see the algorithm live.</p>
+
+  <div class="apps-grid">
+    <!-- News portal -->
+    <div class="app-card" id="appCardNews">
+      <div class="app-card-header">
+        <div class="app-badge">News</div>
+        <div class="app-card-actions">
+          <a href="/ano-app/news-portal/index.html" target="_blank" class="btn btn-ghost" style="font-size:11px;padding:5px 12px">Open app ↗</a>
+        </div>
+      </div>
+      <div class="app-title">PULSE</div>
+      <p class="app-desc">An editorial news feed. Articles ranked by your topic preferences with a transparency score breakdown per post.</p>
+      <div class="app-tags">
+        <span class="app-tag">/feed</span>
+        <span class="app-tag">/event</span>
+        <span class="app-tag">/onboard</span>
+      </div>
+      <!-- Mock preview -->
+      <div class="app-preview news-preview">
+        <div class="np-header"><span class="np-logo">PULSE</span><span class="np-sub">Powered by ano</span></div>
+        <div class="np-feed">
+          <div class="np-card" id="npCard1">
+            <div class="np-rank">1</div>
+            <div class="np-body">
+              <div class="np-tag" id="npTag1">tech</div>
+              <div class="np-title" id="npTitle1">Loading ranked feed…</div>
+              <div class="np-bar"><div class="np-bar-fill" id="npBar1" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="np-card" id="npCard2">
+            <div class="np-rank">2</div>
+            <div class="np-body">
+              <div class="np-tag" id="npTag2">—</div>
+              <div class="np-title" id="npTitle2">—</div>
+              <div class="np-bar"><div class="np-bar-fill" id="npBar2" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="np-card" id="npCard3">
+            <div class="np-rank">3</div>
+            <div class="np-body">
+              <div class="np-tag" id="npTag3">—</div>
+              <div class="np-title" id="npTitle3">—</div>
+              <div class="np-bar"><div class="np-bar-fill" id="npBar3" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social media -->
+    <div class="app-card" id="appCardSocial">
+      <div class="app-card-header">
+        <div class="app-badge social">Social</div>
+        <div class="app-card-actions">
+          <a href="/ano-app/social-media/index.html" target="_blank" class="btn btn-ghost" style="font-size:11px;padding:5px 12px">Open app ↗</a>
+        </div>
+      </div>
+      <div class="app-title" style="font-size:22px">vibe<span style="color:var(--accent)">.</span></div>
+      <p class="app-desc">A social feed ranked by relevance. Posts from different creators sorted by what matters to you, with live event tracking.</p>
+      <div class="app-tags">
+        <span class="app-tag">/feed</span>
+        <span class="app-tag">/event</span>
+        <span class="app-tag">/onboard</span>
+        <span class="app-tag">view signals</span>
+      </div>
+      <!-- Mock preview -->
+      <div class="app-preview social-preview">
+        <div class="sp-header">
+          <span class="sp-logo">vibe.</span>
+          <span class="sp-tab active">For You</span>
+        </div>
+        <div class="sp-feed">
+          <div class="sp-post" id="spPost1">
+            <div class="sp-avatar" id="spAv1">P</div>
+            <div class="sp-content">
+              <div class="sp-author">@priya_builds <span class="sp-score" id="spScore1">…</span></div>
+              <div class="sp-text" id="spText1">Loading feed…</div>
+              <div class="sp-actions">👍 &nbsp; ↗ &nbsp; ✕</div>
+            </div>
+          </div>
+          <div class="sp-post" id="spPost2">
+            <div class="sp-avatar" id="spAv2">M</div>
+            <div class="sp-content">
+              <div class="sp-author">@mchen_dev <span class="sp-score" id="spScore2">…</span></div>
+              <div class="sp-text" id="spText2">—</div>
+              <div class="sp-actions">👍 &nbsp; ↗ &nbsp; ✕</div>
+            </div>
+          </div>
+          <div class="sp-post" id="spPost3">
+            <div class="sp-avatar" id="spAv3">A</div>
+            <div class="sp-content">
+              <div class="sp-author">@aisha_trades <span class="sp-score" id="spScore3">…</span></div>
+              <div class="sp-text" id="spText3">—</div>
+              <div class="sp-actions">👍 &nbsp; ↗ &nbsp; ✕</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="section cta-section">
   <h2 class="cta-headline">Ready to build?</h2>

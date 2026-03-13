@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vibe — social feed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── ONBOARDING ── -->
+  <div id="onboarding" class="screen active">
+    <div class="ob-noise"></div>
+    <div class="ob-glow"></div>
+    <div class="ob-inner">
+      <div class="ob-wordmark">vibe<span class="ob-dot">.</span></div>
+      <p class="ob-headline">your feed,<br/><em>your frequency.</em></p>
+      <p class="ob-desc">Choose what moves you. The algorithm learns.</p>
+
+      <div class="ob-topics" id="obTopics"></div>
+
+      <div class="ob-footer">
+        <div class="ob-uid-wrap">
+          <span class="ob-uid-label">@</span>
+          <input id="uidInput" type="text" placeholder="your_handle" value="vibe_user_001" spellcheck="false" />
+        </div>
+        <button id="enterBtn" class="ob-enter" disabled>
+          <span>Enter the feed</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN APP ── -->
+  <div id="app" class="screen">
+
+    <!-- Left nav -->
+    <nav class="sidenav">
+      <div class="nav-logo">vibe<span>.</span></div>
+      <div class="nav-links">
+        <button class="nav-btn active" data-tab="feed">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 0v12h12V4H4zm2 3h8v2H6V7zm0 4h8v2H6v-2z"/></svg>
+          Feed
+        </button>
+        <button class="nav-btn" data-tab="discover">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+          Discover
+        </button>
+        <button class="nav-btn" data-tab="profile">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+          Profile
+        </button>
+      </div>
+      <div class="nav-user" id="navUser"></div>
+    </nav>
+
+    <!-- Feed area -->
+    <main class="feed-area">
+      <div class="feed-header">
+        <h1 class="feed-title">For You</h1>
+        <button id="refreshFeed" class="icon-btn" title="Refresh">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+
+      <div id="feedLoader" class="feed-loader">
+        <div class="loader-dots"><span></span><span></span><span></span></div>
+        <p>tuning your feed…</p>
+      </div>
+
+      <div id="feedList" class="feed-list"></div>
+    </main>
+
+    <!-- Right panel -->
+    <aside class="right-panel">
+      <div class="rp-section">
+        <h3 class="rp-title">Your Vibe</h3>
+        <div id="rpTopics" class="rp-topics"></div>
+      </div>
+      <div class="rp-section">
+        <h3 class="rp-title">Trending Topics</h3>
+        <div id="rpTrending" class="rp-trending"></div>
+      </div>
+      <div class="rp-section">
+        <h3 class="rp-title">Signal Log</h3>
+        <div id="rpLog" class="rp-log"></div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

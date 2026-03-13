@@ -73,6 +73,7 @@ app.use((req, res, next) => {
 });
 
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/ano-app", express.static(path.join(__dirname, "ano-app")));
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: false }));
 
