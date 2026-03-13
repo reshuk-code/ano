@@ -37,6 +37,7 @@ const express    = require("express");
 const ejsLayouts = require("express-ejs-layouts");
 const path       = require("path");
 
+const cors            = require("cors");
 const { requireAuth, optionalAuth } = require("./lib/authMiddleware");
 const { getTenant, createTenantIfNew } = require("./lib/tenants");
 const { createApiKey, validateApiKey, revokeApiKey, listKeysForTenant } = require("./lib/apiKeys");
@@ -74,6 +75,27 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: false }));
+
+// ── CORS ──────────────────────────────────────────────────────
+// API routes are consumed by third-party apps — allow all origins.
+// Restrict to specific methods & headers so preflight passes cleanly.
+const API_PATHS = /^\/(?:feed|event|profile|admin)(\/|$)/;
+
+app.use((req, res, next) => {
+  if (!API_PATHS.test(req.path)) return next(); // skip for web UI routes
+  cors({
+    origin: true,                  // reflect request origin (allows any)
+    methods: ["GET", "POST", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "x-ano-api-key",
+      "x-ano-master-key",
+      "x-ano-user-id",
+    ],
+    credentials: false,
+    maxAge: 86400,                 // cache preflight for 24 h
+  })(req, res, next);
+});
 
 // ─────────────────────────────────────────────────────────────
 // PUBLIC PAGES

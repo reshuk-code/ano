@@ -10,6 +10,7 @@
     "generate-key": "node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ejs": "^5.0.1",
     "express": "^4.19.2",
